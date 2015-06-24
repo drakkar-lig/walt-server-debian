@@ -1,4 +1,5 @@
 walt-server-debian
 ==================
 
-Home of debian-based WalT server development. 
+Home of the WalT server operating system development.
+

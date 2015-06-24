@@ -1,0 +1,20 @@
+# walt-server - WalT platform server daemon
+#
+# The WalT platform provides a lightweight distributed testbed for
+# sensor networks, distributed protocols, distributed data 
+# management.
+
+[Unit]
+Description=WalT server daemon
+After=lldpd.service
+Requires=lldpd.service
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/default/walt-server
+EnvironmentFile=-/etc/sysconfig/walt-server
+ExecStart=/usr/local/bin/walt-server-daemon $DAEMON_ARGS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

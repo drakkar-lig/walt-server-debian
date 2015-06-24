@@ -1,0 +1,5 @@
+
+auto eth0 eth0.169
+iface eth0 inet manual
+iface eth0.169 inet manual
+
