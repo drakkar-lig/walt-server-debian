@@ -51,12 +51,14 @@ RUN apt-get update && \
 # install python packages
 RUN pip install --upgrade pip walt-server walt-client # 0.4-1
 
+# the following is the same as running 'systemctl enable walt-server'
+# on a system that is really running
+RUN ln -s /etc/systemd/system/walt-server.service \
+	/etc/systemd/system/multi-user.target.wants/walt-server.service
+
 # dhcpd should not start automatically
 # (it is managed by walt-server-daemon)
-RUN systemctl disable isc-dhcp-server
-
-# FOR TESTS
-RUN systemctl disable walt-server 
+RUN update-rc.d isc-dhcp-server disable
 
 # copy static files 
 ADD conf_files /
