@@ -37,8 +37,14 @@ MAINTAINER $DOCKER_IMAGE_MAINTAINER
 # update apt sources
 ADD sources.list /etc/apt/sources.list
 
+# we use an older docker version from snapshot.debian.org
+# in order to be able to export container filesystem with
+# nfs. Let apt ignore the older release date.
+RUN echo 'Acquire::Check-Valid-Until "false";' > \
+	/etc/apt/apt.conf.d/90walt-docker
+
 # install packages
-RUN apt-get -o Acquire::Check-Valid-Until=false update && \
+RUN apt-get update && \
 	$APT_GET_INSTALL $PACKAGES && \
 	apt-get clean 
 
