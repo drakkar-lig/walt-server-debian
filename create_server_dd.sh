@@ -29,5 +29,6 @@ EOF
 
 # call debootstick
 cd "$THIS_DIR"
-debootstick --config-root-password-first-boot "$CONTAINER_DIR" "$image_path"
+debootstick --system-type installer --config-root-password-first-boot \
+        "$CONTAINER_DIR" "$image_path"
 
