@@ -66,13 +66,6 @@ ADD conf_files /
 # generate an ssh keypair
 RUN ssh-keygen -q -t dsa -f /root/.ssh/id_dsa -N ''
 
-# set a root password
-# caution: the walt server will be connected to the
-# internet. => WE SHOULD IMPROVE THIS.
-# (this will just be used for debugging, should we
-# just remove this?)
-RUN echo 'root:walt' | chpasswd
-
 # re-enable service startup
 # (docker containers are not expected to start services,
 # thus they are disabled on docker official images.

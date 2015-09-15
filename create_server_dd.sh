@@ -29,5 +29,5 @@ EOF
 
 # call debootstick
 cd "$THIS_DIR"
-debootstick --config-grub-on-serial-line "$CONTAINER_DIR" "$image_path"
+debootstick --config-root-password-first-boot "$CONTAINER_DIR" "$image_path"
 
