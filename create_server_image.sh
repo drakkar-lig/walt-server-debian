@@ -49,7 +49,7 @@ RUN apt-get update && \
 	apt-get clean 
 
 # install python packages
-RUN pip install --upgrade pip walt-server walt-client # 0.4-1
+RUN pip install --upgrade pip walt-server walt-client # 0.5
 
 # the following is the same as running 'systemctl enable walt-server'
 # on a system that is really running
