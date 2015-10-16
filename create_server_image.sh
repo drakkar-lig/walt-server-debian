@@ -68,6 +68,10 @@ ADD conf_files /
 # generate an ssh keypair
 RUN ssh-keygen -q -t dsa -f /root/.ssh/id_dsa -N ''
 
+# generate and select an UTF-8 locale
+RUN sed -i -e 's/# \\(en_US.UTF-8\\)/\\1/' /etc/locale.gen && \
+        locale-gen && echo LANG=en_US.UTF-8 >> /etc/default/locale
+
 # re-enable service startup
 # (docker containers are not expected to start services,
 # thus they are disabled on docker official images.
