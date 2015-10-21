@@ -6,8 +6,8 @@
 
 [Unit]
 Description=Switch to VT 8 running WalT server daemon
-After=logind.service
-Requires=logind.service
+After=systemd-logind.service
+Requires=systemd-logind.service
 After=walt-server.service
 Requires=walt-server.service
 
