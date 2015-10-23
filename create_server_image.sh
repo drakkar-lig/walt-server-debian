@@ -72,6 +72,9 @@ RUN ssh-keygen -q -t dsa -f /root/.ssh/id_dsa -N ''
 RUN sed -i -e 's/# \\(en_US.UTF-8\\)/\\1/' /etc/locale.gen && \
         locale-gen && echo LANG=en_US.UTF-8 >> /etc/default/locale
 
+# Increase the console font size
+RUN sed -i -e 's/\\(FONTSIZE\\)=.*$/\\1=12x24/' /etc/default/console-setup
+
 # re-enable service startup
 # (docker containers are not expected to start services,
 # thus they are disabled on docker official images.
