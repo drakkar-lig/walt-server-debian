@@ -55,8 +55,8 @@ RUN pip install --upgrade pip walt-server walt-client # 0.5
 # on a system that is really running
 RUN ln -s /etc/systemd/system/walt-server.service \
 	/etc/systemd/system/multi-user.target.wants/walt-server.service
-RUN ln -s /etc/systemd/system/walt-server-vt-switch.service \
-	/etc/systemd/system/multi-user.target.wants/walt-server-vt-switch.service
+RUN ln -s /etc/systemd/system/walt-server-console.service \
+	/etc/systemd/system/multi-user.target.wants/walt-server-console.service
 
 # dhcpd should not start automatically
 # (it is managed by walt-server-daemon)

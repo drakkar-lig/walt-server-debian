@@ -15,13 +15,6 @@ EnvironmentFile=-/etc/default/walt-server
 EnvironmentFile=-/etc/sysconfig/walt-server
 ExecStart=/usr/local/bin/walt-server-daemon $DAEMON_ARGS
 Restart=on-failure
-StandardInput=tty
-StandardOutput=tty
-StandardError=tty
-TTYPath=/dev/tty8
-TTYReset=yes
-TTYVHangup=yes
-TTYVTDisallocate=yes
 
 [Install]
 WantedBy=multi-user.target

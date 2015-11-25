@@ -1,0 +1,33 @@
+# walt-server - WalT platform server console
+#
+# The WalT platform provides a lightweight distributed testbed for
+# sensor networks, distributed protocols, distributed data 
+# management.
+
+[Unit]
+Description=WalT server console
+# we require to be executed after systemd-logind,
+# in order to ensure the last VT switch will be
+# our own and thus the display will be directed
+# to this server console at the end of the OS
+# bootup procedure.
+After=systemd-logind.service
+Requires=systemd-logind.service
+After=walt-server.service
+Requires=walt-server.service
+
+[Service]
+Type=simple
+ExecStartPre=/bin/chvt 8
+ExecStart=/usr/local/bin/walt-server-console
+Restart=on-failure
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty8
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+
+[Install]
+WantedBy=multi-user.target
