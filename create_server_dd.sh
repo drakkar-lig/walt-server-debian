@@ -1,7 +1,10 @@
 #!/bin/bash
+
+export SERIAL=$SERIAL
+
 if [ $(id -u) -ne 0 ]; then
     # this should be run as root
-    exec sudo "$0" "$@"
+    exec sudo -E "$0" "$@"
 fi
 
 eval "$(docker run waltplatform/dev-master env)"
@@ -29,6 +32,12 @@ EOF
 
 # call debootstick
 cd "$THIS_DIR"
-debootstick --system-type installer --config-root-password-first-boot \
-        "$CONTAINER_DIR" "$image_path"
+
+DBSTCK_ARGS="--system-type installer --config-root-password-first-boot"
+if [ "$SERIAL" = "1" ]
+then
+    DBSTCK_ARGS="$DBSTCK_ARGS --config-kernel-bootargs console=ttyS0 --config-grub-on-serial-line"
+fi
+
+debootstick $DBSTCK_ARGS "$CONTAINER_DIR" "$image_path"
 
