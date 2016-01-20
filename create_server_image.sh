@@ -8,8 +8,7 @@ cd $TMP_DIR
 
 cat > sources.list << EOF
 deb $DEBIAN_SERVER_REPO_URL $DEBIAN_SERVER_REPO_VERSION $DEBIAN_SERVER_REPO_SECTIONS
-#deb $DEBIAN_SERVER_REPO_URL $DEBIAN_SERVER_REPO_VERSION-backports $DEBIAN_SERVER_REPO_SECTIONS
-deb http://snapshot.debian.org/archive/debian/20150103T160317Z/ jessie main
+deb $DEBIAN_SERVER_REPO_URL $DEBIAN_SERVER_REPO_VERSION-backports main
 
 deb http://security.debian.org/ jessie/updates main
 deb http://ftp.ch.debian.org/debian/ jessie-updates main
@@ -18,14 +17,17 @@ docker-preserve-cache sources.list $DOCKER_CACHE_PRESERVE_DIR
 
 cp -ar $THIS_DIR/conf_files conf_files
 
-PACKAGES=$(echo python-pip docker.io binfmt-support qemu-user-static \
+BACKPORTS_PACKAGES=docker.io
+
+PACKAGES=$(echo python-pip binfmt-support qemu-user-static \
 		lldpd snmp snmpd sqlite3 gdisk linux-image-amd64 lvm2 \
 		grub-pc isc-dhcp-client vim net-tools \
 		keyboard-configuration openssh-server console-setup \
 		ifupdown iputils-ping iputils-arping locales dialog \
 		snmp-mibs-downloader snimpy isc-dhcp-server \
 		nfs-kernel-server ntpdate ntp lockfile-progs \
-		uuid-runtime postgresql python-psycopg2)
+		uuid-runtime postgresql python-psycopg2 \
+        firmware-linux-nonfree)
 
 APT_GET_INSTALL="DEBIAN_FRONTEND=noninteractive \
 		apt-get install -y --no-install-recommends"
@@ -37,19 +39,14 @@ MAINTAINER $DOCKER_IMAGE_MAINTAINER
 # update apt sources
 ADD sources.list /etc/apt/sources.list
 
-# we use an older docker version from snapshot.debian.org
-# in order to be able to export container filesystem with
-# nfs. Let apt ignore the older release date.
-RUN echo 'Acquire::Check-Valid-Until "false";' > \
-	/etc/apt/apt.conf.d/90walt-docker
-
 # install packages
 RUN apt-get update && \
 	$APT_GET_INSTALL $PACKAGES && \
+	$APT_GET_INSTALL -t $DEBIAN_SERVER_REPO_VERSION-backports $BACKPORTS_PACKAGES && \
 	apt-get clean 
 
 # install python packages
-RUN pip install --upgrade pip walt-server walt-client # 0.5
+RUN pip install --upgrade pip walt-server walt-client # server: 0.7-5; client: 0.6-1; common: 0.6-2
 
 # the following is the same as running 'systemctl enable walt-server'
 # on a system that is really running
