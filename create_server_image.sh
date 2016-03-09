@@ -27,7 +27,7 @@ PACKAGES=$(echo python-pip binfmt-support qemu-user-static \
 		snmp-mibs-downloader snimpy isc-dhcp-server \
 		nfs-kernel-server ntpdate ntp lockfile-progs \
 		uuid-runtime postgresql python-psycopg2 \
-        firmware-linux-nonfree)
+        firmware-linux-nonfree ptpd)
 
 APT_GET_INSTALL="DEBIAN_FRONTEND=noninteractive \
 		apt-get install -y --no-install-recommends"
