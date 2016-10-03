@@ -15,7 +15,9 @@ deb http://ftp.ch.debian.org/debian/ jessie-updates main
 EOF
 docker-preserve-cache sources.list $DOCKER_CACHE_PRESERVE_DIR
 
-cp -ar $THIS_DIR/conf_files conf_files
+cp -ar $THIS_DIR/conf_files files
+mkdir -p files/var/lib/walt/boot
+cp -ar $THIS_DIR/build/rpi.uboot files/var/lib/walt/boot/
 
 BACKPORTS_PACKAGES=docker.io
 
@@ -27,7 +29,7 @@ PACKAGES=$(echo python-pip binfmt-support qemu-user-static \
 		snmp-mibs-downloader snimpy isc-dhcp-server \
 		nfs-kernel-server ntpdate ntp lockfile-progs \
 		uuid-runtime postgresql python-psycopg2 \
-        firmware-linux-nonfree ptpd)
+        firmware-linux-nonfree ptpd tftpd)
 
 APT_GET_INSTALL="DEBIAN_FRONTEND=noninteractive \
 		apt-get install -y --no-install-recommends"
@@ -60,7 +62,7 @@ RUN ln -s /etc/systemd/system/walt-server-console.service \
 RUN update-rc.d isc-dhcp-server disable
 
 # copy static files 
-ADD conf_files /
+ADD files /
 
 # generate an ssh keypair
 RUN ssh-keygen -q -t dsa -f /root/.ssh/id_dsa -N ''
@@ -86,5 +88,4 @@ result=$?
 rm -rf $TMP_DIR
 
 exit $result
-
 

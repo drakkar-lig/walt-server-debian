@@ -1,0 +1,26 @@
+setenv walt_init "/usr/local/bin/walt-init"
+
+# retrieve the kernel
+tftp ${kernel_addr_r} ${serverip}:nodes/${ethaddr}/${node_type}/kernel || reset
+
+# retrieve the dtb (device-tree-blob) if any
+tftp ${fdt_addr_r} ${serverip}:nodes/${ethaddr}/${node_type}/dtb || setenv fdt_addr_r "-"
+
+# compute kernel command line args
+setenv nfs_root "${serverip}:/var/lib/walt/nodes/${ethaddr}"
+setenv nfs_bootargs "root=/dev/nfs nfsroot=${nfs_root},nfsvers=3"
+setenv console_bootargs "console=ttyAMA0,115200 console=tty1"
+setenv other_bootargs "smsc95xx.macaddr=${ethaddr} init=${walt_init} ip=dhcp panic=15"
+setenv bootargs "${nfs_bootargs} ${console_bootargs} ${other_bootargs}"
+
+# boot
+if test ${fdt_addr_r} = '-'
+then
+    echo 'This walt image apparently has no dtb.'
+    echo 'Booting kernel...'
+    bootz ${kernel_addr_r} || reset
+else
+    echo 'Booting kernel...'
+    # second argument is for the ramdisk ("-" means none)
+    bootz ${kernel_addr_r} - ${fdt_addr_r} || reset
+fi
