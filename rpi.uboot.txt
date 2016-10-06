@@ -10,8 +10,11 @@ tftp ${kernel_addr_r} ${serverip}:nodes/${ethaddr}/${node_type}/kernel || reset
 setenv nfs_root "${serverip}:/var/lib/walt/nodes/${ethaddr}"
 setenv nfs_bootargs "root=/dev/nfs nfsroot=${nfs_root},nfsvers=3"
 setenv console_bootargs "console=ttyAMA0,115200 console=tty1"
-setenv other_bootargs "smsc95xx.macaddr=${ethaddr} init=${walt_init} ip=dhcp panic=15"
-setenv bootargs "${nfs_bootargs} ${console_bootargs} ${other_bootargs}"
+setenv rpi_bootargs "smsc95xx.macaddr=${ethaddr}"
+setenv walt_bootargs "walt.node.type=${node_type} walt.server.ip=${serverip}"
+setenv other_bootargs "init=${walt_init} ip=dhcp panic=15"
+setenv bootargs "$nfs_bootargs $console_bootargs\
+ $rpi_bootargs $walt_bootargs $other_bootargs"
 
 # boot
 if test ${fdt_addr_r} = '-'
