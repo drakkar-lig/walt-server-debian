@@ -1,7 +1,21 @@
 setenv walt_init "/usr/local/bin/walt-init"
 
-# retrieve the dtb (device-tree-blob) if any
-tftp ${fdt_addr_r} ${serverip}:nodes/${ethaddr}/${node_type}/dtb || setenv fdt_addr_r "-"
+# retrieve the dtb (device-tree-blob), or if it fails check that
+# a file called "nodtb" is present.
+# (this allows to avoid wrongly interpreting a failed tftp transfer)
+if tftp ${fdt_addr_r} ${serverip}:nodes/${ethaddr}/${node_type}/dtb
+then
+    setenv has_dtb '1'
+else
+    echo 'Could not download the dtb file.'
+    echo 'Checking if a file called nodtb exists.'
+    if tftp ${fdt_addr_r} ${serverip}:nodes/${ethaddr}/${node_type}/nodtb
+    then
+        setenv has_dtb '0'
+    else
+        reset
+    fi
+fi
 
 # retrieve the kernel
 tftp ${kernel_addr_r} ${serverip}:nodes/${ethaddr}/${node_type}/kernel || reset
@@ -17,7 +31,7 @@ setenv bootargs "$nfs_bootargs $console_bootargs\
  $rpi_bootargs $walt_bootargs $other_bootargs"
 
 # boot
-if test ${fdt_addr_r} = '-'
+if test ${has_dtb} = '0'
 then
     echo 'This walt image apparently has no dtb.'
     echo 'Booting kernel...'
