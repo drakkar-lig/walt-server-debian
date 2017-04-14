@@ -1,4 +1,4 @@
-setenv walt_init "/usr/local/bin/walt-init"
+setenv walt_init "/bin/walt-init"
 
 # retrieve the dtb (device-tree-blob), or if it fails check that
 # a file called "nodtb" is present.
