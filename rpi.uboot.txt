@@ -22,7 +22,7 @@ tftp ${kernel_addr_r} ${serverip}:nodes/${ethaddr}/${node_model}/kernel || reset
 
 # compute kernel command line args
 setenv nfs_root "${serverip}:/var/lib/walt/nodes/${ethaddr}"
-setenv nfs_bootargs "root=/dev/nfs nfsroot=${nfs_root},nfsvers=3"
+setenv nfs_bootargs "root=/dev/nfs nfsroot=${nfs_root},nfsvers=3,acregmax=5"
 setenv console_bootargs "console=ttyAMA0,115200 console=tty1"
 setenv rpi_bootargs "smsc95xx.macaddr=${ethaddr}"
 setenv walt_bootargs "walt.node.model=${node_model} walt.server.ip=${serverip}"
