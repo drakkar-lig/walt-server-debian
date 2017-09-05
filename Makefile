@@ -8,11 +8,8 @@ server-install.tar.bz2: server.dd archive/README.txt
 	tar -cj -f server-install.tar.bz2 -C /tmp server-install
 	rm -rf /tmp/server-install
 
-.date_files/server_image: create_server_image.sh build/rpi.uboot
+.date_files/server_image: create_server_image.sh
 	./create_server_image.sh && touch $@
-
-build/rpi.uboot: rpi.uboot.txt
-	./compile_rpi_uboot_script.sh
 
 server.dd: .date_files/server_image create_server_dd.sh
 	./create_server_dd.sh server.dd

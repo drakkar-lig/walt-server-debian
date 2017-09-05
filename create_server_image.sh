@@ -16,12 +16,6 @@ EOF
 docker-preserve-cache sources.list $DOCKER_CACHE_PRESERVE_DIR
 
 cp -ar $THIS_DIR/conf_files files
-mkdir -p files/var/lib/walt/boot
-cp -ar $THIS_DIR/build/rpi.uboot files/var/lib/walt/boot/
-for rpi_type in $ALL_RPI_TYPES
-do
-    ln -s rpi.uboot files/var/lib/walt/boot/${rpi_type}.uboot
-done
 
 BACKPORTS_PACKAGES=docker.io
 
