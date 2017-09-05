@@ -9,7 +9,7 @@ Description=WalT server daemon
 # needs lldp
 Requires=lldpd.service
 After=lldpd.service
-# needs ptpd, but we must be initialized (ip on eth0.1)
+# needs ptpd, but we must be initialized (ip on walt-net)
 # otherwise ptpd will fail to start (thus the 'Before=',
 # and the 'Type=notify' below).
 Wants=ptpd.service

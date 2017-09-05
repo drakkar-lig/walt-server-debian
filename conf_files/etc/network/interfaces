@@ -1,6 +1,15 @@
 
-auto eth0 eth0.1 eth0.169
-iface eth0 inet manual
-iface eth0.169 inet manual
-iface eth0.1 inet manual
+auto walt-net walt-adm walt-out
+
+iface walt-net inet manual
+    up walt-net-config up
+    down walt-net-config down
+
+iface walt-adm inet manual
+    up walt-net-config up
+    down walt-net-config down
+
+iface walt-out inet manual
+    up walt-net-config up
+    down walt-net-config down
 
