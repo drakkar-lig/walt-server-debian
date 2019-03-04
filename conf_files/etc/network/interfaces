@@ -1,15 +1,36 @@
 
-auto walt-net walt-adm walt-out
+# walt normally requires 2 interfaces:
+# * an interface for internet connection
+# * an interface for connecting walt experimentation network
+
+# If the host has two physical interfaces, the configuration
+# can be obvious.
+# If it has only one interface, one can configure VLANs
+# in file /etc/walt/server.conf in order to use this
+# single interface for both networks.
+
+# Here, since this initial setup might be used for quick
+# demo purposes, we just require the host to have one
+# interface with internet connection (this is eth0).
+# The walt network (walt-net virtual bridge) will be
+# connected to a fake secondary interface called "walt-dummy".
+# If, in your case, the host really has a second physical
+# interface (eth1), you can simply remove this declaration of
+# "walt-dummy" below, and replace "walt-dummy" by "eth1" in
+# file /etc/walt/server.conf.
+
+auto eth0
+iface eth0 inet dhcp
+
+auto walt-dummy
+
+iface walt-dummy inet manual
+    up ip link add walt-dummy type dummy
+    down ip link del walt-dummy type dummy
+
+auto walt-net
 
 iface walt-net inet manual
-    up walt-net-config up
-    down walt-net-config down
-
-iface walt-adm inet manual
-    up walt-net-config up
-    down walt-net-config down
-
-iface walt-out inet manual
     up walt-net-config up
     down walt-net-config down
 

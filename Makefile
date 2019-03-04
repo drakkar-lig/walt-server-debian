@@ -8,7 +8,7 @@ server-install.tar.bz2: server.dd archive/README.txt
 	tar -cj -f server-install.tar.bz2 -C /tmp server-install
 	rm -rf /tmp/server-install
 
-.date_files/server_image: create_server_image.sh
+.date_files/server_image: create_server_image.sh docker.apt docker.gpg $(shell find conf_files -type f)
 	./create_server_image.sh && touch $@
 
 server.dd: .date_files/server_image create_server_dd.sh

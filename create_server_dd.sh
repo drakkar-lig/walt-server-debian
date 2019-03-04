@@ -33,11 +33,14 @@ EOF
 # call debootstick
 cd "$THIS_DIR"
 
-DBSTCK_ARGS="--system-type installer --config-root-password-first-boot"
+OPTIONS="--config-root-password-first-boot --system-type installer"
+BOOTARGS="net.ifnames=0"
+
 if [ "$SERIAL" = "1" ]
 then
-    DBSTCK_ARGS="$DBSTCK_ARGS --config-kernel-bootargs console=ttyS0 --config-grub-on-serial-line"
+    OPTIONS="$OPTIONS --config-grub-on-serial-line"
+    BOOTARGS="$BOOTARGS console=ttyS0"
 fi
 
-debootstick $DBSTCK_ARGS "$CONTAINER_DIR" "$image_path"
+debootstick $OPTIONS --config-kernel-bootargs "$BOOTARGS" "$CONTAINER_DIR" "$image_path"
 

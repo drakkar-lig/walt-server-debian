@@ -6,58 +6,55 @@ TMP_DIR=$(mktemp -d)
 
 cd $TMP_DIR
 
-cat > sources.list << EOF
-deb $DEBIAN_SERVER_REPO_URL $DEBIAN_SERVER_REPO_VERSION $DEBIAN_SERVER_REPO_SECTIONS
-deb $DEBIAN_SERVER_REPO_URL $DEBIAN_SERVER_REPO_VERSION-backports main
-
-deb http://security.debian.org/ jessie/updates main
-deb http://ftp.ch.debian.org/debian/ jessie-updates main
-EOF
-docker-preserve-cache sources.list $DOCKER_CACHE_PRESERVE_DIR
-
 cp -ar $THIS_DIR/conf_files files
+cp -a $THIS_DIR/docker.gpg $THIS_DIR/docker.apt .
 
-BACKPORTS_PACKAGES=docker.io
-
-PACKAGES=$(echo python-pip binfmt-support qemu-user-static \
+PACKAGES=$(echo apt-transport-https ca-certificates gnupg2 \
+        curl software-properties-common gcc python-dev \
+        binfmt-support qemu-user-static \
 		lldpd snmp snmpd sqlite3 gdisk linux-image-amd64 lvm2 \
 		grub-pc isc-dhcp-client vim net-tools \
 		keyboard-configuration openssh-server console-setup \
 		ifupdown iputils-ping iputils-arping locales dialog \
-		snmp-mibs-downloader snimpy isc-dhcp-server \
+		snmp-mibs-downloader libsmi-dev isc-dhcp-server \
 		nfs-kernel-server ntpdate ntp lockfile-progs \
 		uuid-runtime postgresql python-psycopg2 \
-        firmware-linux-nonfree ptpd tftpd-hpa ebtables kvm)
+        firmware-linux-nonfree ptpd tftpd-hpa ebtables kvm \
+        bridge-utils screen linux-headers-amd64 aufs-dkms)
 
 APT_GET_INSTALL="DEBIAN_FRONTEND=noninteractive \
 		apt-get install -y --no-install-recommends"
 
 cat > Dockerfile << EOF
-FROM debian:$DEBIAN_SERVER_REPO_VERSION
+FROM debian:stretch
 MAINTAINER $DOCKER_IMAGE_MAINTAINER
 
-# update apt sources
-ADD sources.list /etc/apt/sources.list
+# get docker GPG key and apt conf
+# not enabled yet because extension is not ".list".
+# we need to have apt-transport-https installed first.
+ADD docker.gpg docker.apt /etc/apt/sources.list.d/
 
 # install packages
-RUN apt-get update && \
+RUN sed -i -e 's/main/main non-free/g' /etc/apt/sources.list && \
+    apt-get update && \
 	$APT_GET_INSTALL $PACKAGES && \
-	$APT_GET_INSTALL -t $DEBIAN_SERVER_REPO_VERSION-backports $BACKPORTS_PACKAGES && \
-	apt-get clean 
+    cat /etc/apt/sources.list.d/docker.gpg | apt-key add - >/dev/null 2>&1 && \
+    mv /etc/apt/sources.list.d/docker.apt /etc/apt/sources.list.d/docker.list && \
+    apt-get update && \
+    $APT_GET_INSTALL docker-engine && \
+	apt-get clean && rm -f /etc/apt/sources.list.d/docker.gpg
+
+# reinstall aufs to allow NFS export
+RUN sed -i -e "s/CONFIG_AUFS_EXPORT =.*/CONFIG_AUFS_EXPORT = y/g" /usr/src/aufs-4.9+20161219/config.mk
+RUN sed -i -e "s/CONFIG_AUFS_INO_T_64 =.*/CONFIG_AUFS_INO_T_64 = y/g" /usr/src/aufs-4.9+20161219/config.mk
+RUN dkms uninstall aufs/4.9+20161219 -k 4.9.0-8-amd64 && \
+    dkms remove aufs/4.9+20161219 -k 4.9.0-8-amd64 && \
+    dkms build aufs/4.9+20161219 -k 4.9.0-8-amd64 && \
+    dkms install aufs/4.9+20161219 -k 4.9.0-8-amd64
 
 # install python packages
-RUN pip install --upgrade pip walt-server walt-client # server: 0.7-5; client: 0.6-1; common: 0.6-2
-
-# the following is the same as running 'systemctl enable walt-server'
-# on a system that is really running
-RUN ln -s /etc/systemd/system/walt-server.service \
-	/etc/systemd/system/multi-user.target.wants/walt-server.service
-RUN ln -s /etc/systemd/system/walt-server-console.service \
-	/etc/systemd/system/multi-user.target.wants/walt-server-console.service
-
-# dhcpd should not start automatically
-# (it is managed by walt-server-daemon)
-RUN update-rc.d isc-dhcp-server disable
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py && \
+    pip install walt-server walt-client
 
 # copy static files 
 ADD files /
