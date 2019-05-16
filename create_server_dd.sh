@@ -33,7 +33,8 @@ EOF
 # call debootstick
 cd "$THIS_DIR"
 
-OPTIONS="--config-root-password-first-boot --system-type installer"
+#OPTIONS="--config-root-password-first-boot --system-type installer"
+OPTIONS="--config-root-password-first-boot"
 BOOTARGS="net.ifnames=0"
 
 if [ "$SERIAL" = "1" ]
