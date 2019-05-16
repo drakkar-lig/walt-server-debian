@@ -1,0 +1,5 @@
+{
+    # ip or hostname of walt server
+    # -----------------------------
+    "server": "localhost"
+}
