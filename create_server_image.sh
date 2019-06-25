@@ -59,6 +59,9 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py
 # copy static files 
 ADD files /
 
+# install services
+RUN walt-server-setup
+
 # generate and select an UTF-8 locale
 RUN sed -i -e 's/# \\(en_US.UTF-8\\)/\\1/' /etc/locale.gen && \
         locale-gen && echo LANG=en_US.UTF-8 >> /etc/default/locale
