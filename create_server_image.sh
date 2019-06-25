@@ -60,7 +60,7 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py
 ADD files /
 
 # install services
-RUN walt-server-setup
+RUN walt-server-setup && walt-virtual-setup
 
 # generate and select an UTF-8 locale
 RUN sed -i -e 's/# \\(en_US.UTF-8\\)/\\1/' /etc/locale.gen && \
