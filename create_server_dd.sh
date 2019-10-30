@@ -11,11 +11,12 @@ eval "$(docker run waltplatform/dev-master env)"
 THIS_DIR=$(cd $(dirname $0); pwd)
 CONTAINER_DIR=$(mktemp -d)
 
-image_path="$1"
+mode=$1
+image_path="$2"
 
 # export the filesystem of the image
 # (we need an intermediate container for this)
-docker run --name tmpcontainer_$$ $DOCKER_SERVER_IMAGE true
+docker run --name tmpcontainer_$$ waltplatform/server-$mode true
 cd $CONTAINER_DIR
 docker export tmpcontainer_$$ | tar xf -
 docker rm tmpcontainer_$$   # not needed anymore

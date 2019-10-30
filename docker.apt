@@ -1,4 +1,0 @@
-# note: newer versions of docker are now available at:
-# deb https://download.docker.com/linux/debian stretch stable
-# but walt is not compatible with them yet.
-deb https://apt.dockerproject.org/repo debian-stretch main
