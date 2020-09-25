@@ -39,6 +39,10 @@ MANY_PACKAGES="$MANY_PACKAGES $PIP_DEPENDENCIES_PACKAGES \$($GET_FIRMWARE_PACKAG
 if [ "$MODE" = "prod" ]
 then
     WALT_INSTALL="pip3 install walt-server walt-client"
+elif [ "$MODE" = "prodtest" ]
+then
+    WALT_INSTALL="pip3 install --index-url https://test.pypi.org/simple/         \
+                         --extra-index-url https://pypi.org/simple walt-server walt-client"
 else
     WALT_INSTALL="cd /root && git clone https://github.com/drakkar-lig/walt-python-packages && \
                   cd walt-python-packages && git checkout -b dev origin/dev && make install"

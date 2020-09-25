@@ -5,6 +5,8 @@ dev: server-install-dev.dd.bz2
 
 prod: server-install-prod.dd.bz2
 
+prodtest: server-install-prodtest.dd
+
 %.bz2: %
 	bzip2 $<
 
