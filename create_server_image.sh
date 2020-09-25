@@ -22,7 +22,7 @@ WALT_DEPENDENCIES_PACKAGES=$(echo binfmt-support qemu-user-static \
         screen ifupdown)
 PIP_DEPENDENCIES_PACKAGES="gcc python3-dev"
 WALT_DEV_PACKAGES="git make sudo"
-CONTAINER_PACKAGES="docker-ce docker-ce-cli containerd.io podman buildah"
+CONTAINER_PACKAGES="docker-ce docker-ce-cli containerd.io podman buildah skopeo"
 
 GET_FIRMWARE_PACKAGES="""\
 apt-cache search --names-only 'firmware-.*' | awk '{print \$1}' | \
