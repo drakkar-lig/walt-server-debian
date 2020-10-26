@@ -1,6 +1,7 @@
 #!/bin/bash
 eval "$(docker run waltplatform/dev-master env)"
 MODE=$1
+EXPECTED_WALT_VERSION=6
 THIS_DIR=$(cd $(dirname $0); pwd)
 DOCKER_CACHE_PRESERVE_DIR=$THIS_DIR/.docker_cache
 TMP_DIR=$(mktemp -d)
@@ -38,11 +39,14 @@ MANY_PACKAGES="$WALT_DEPENDENCIES_PACKAGES $DEBOOTSTICK_PACKAGES $OTHER_OS_PACKA
 MANY_PACKAGES="$MANY_PACKAGES $PIP_DEPENDENCIES_PACKAGES \$($GET_FIRMWARE_PACKAGES)"
 if [ "$MODE" = "prod" ]
 then
-    WALT_INSTALL="pip3 install walt-server walt-client"
+    WALT_INSTALL="pip3 install walt-server==$EXPECTED_WALT_VERSION \
+                               walt-client==$EXPECTED_WALT_VERSION"
 elif [ "$MODE" = "prodtest" ]
 then
     WALT_INSTALL="pip3 install --index-url https://test.pypi.org/simple/         \
-                         --extra-index-url https://pypi.org/simple walt-server walt-client"
+                         --extra-index-url https://pypi.org/simple \
+                            walt-server==$EXPECTED_WALT_VERSION \
+                            walt-client==$EXPECTED_WALT_VERSION"
 else
     WALT_INSTALL="cd /root && git clone https://github.com/drakkar-lig/walt-python-packages && \
                   cd walt-python-packages && git checkout -b dev origin/dev && make install"
