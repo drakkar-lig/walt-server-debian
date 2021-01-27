@@ -71,6 +71,7 @@ RUN sed -i -e 's/main/main contrib non-free/g' /etc/apt/sources.list && \
     mv /etc/apt/sources.list.d/docker.apt /etc/apt/sources.list.d/docker.list && \
     mv /etc/apt/sources.list.d/libcontainers.apt /etc/apt/sources.list.d/libcontainers.list && \
     apt-get update && \
+    $APT_GET_INSTALL -t buster-backports libseccomp2 && \
     $APT_GET_INSTALL $CONTAINER_PACKAGES && \
 	apt-get clean && rm -f /etc/apt/sources.list.d/*.gpg
 
