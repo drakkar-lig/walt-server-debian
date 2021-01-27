@@ -22,7 +22,7 @@ WALT_DEPENDENCIES_PACKAGES=$(echo binfmt-support qemu-user-static \
         ntpdate ntp lockfile-progs ptpd tftpd-hpa ebtables qemu-kvm bridge-utils \
         screen ifupdown)
 PIP_DEPENDENCIES_PACKAGES="gcc python3-dev"
-WALT_DEV_PACKAGES="git make sudo"
+WALT_DEV_PACKAGES="git make sudo expect netcat"
 CONTAINER_PACKAGES="docker-ce docker-ce-cli containerd.io podman buildah skopeo"
 
 GET_FIRMWARE_PACKAGES="""\
