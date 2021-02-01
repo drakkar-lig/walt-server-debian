@@ -1,7 +1,7 @@
 #!/bin/bash
 eval "$(docker run waltplatform/dev-master env)"
 MODE=$1
-EXPECTED_WALT_VERSION=6
+EXPECTED_WALT_VERSION=7
 THIS_DIR=$(cd $(dirname $0); pwd)
 DOCKER_CACHE_PRESERVE_DIR=$THIS_DIR/.docker_cache
 TMP_DIR=$(mktemp -d)
