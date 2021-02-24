@@ -1,4 +1,7 @@
-# these first lines ensures compatibility of legacy
+# files used for standard PXE booting should not be
+# redirected because images of new nodes are not mounted yet
+e .*undionly.*
+# these two lines ensures compatibility of legacy
 # bootloader configurations.
 r boot/rpi-.*\.uboot start.uboot
 r boot/pc-x86-64.ipxe start.ipxe
