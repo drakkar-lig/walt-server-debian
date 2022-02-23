@@ -1,3 +1,0 @@
-deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /
-# we have to fix a dependency issue with libseccomp2 (https://github.com/containers/podman/issues/7508)
-deb http://deb.debian.org/debian buster-backports main

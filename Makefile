@@ -1,7 +1,7 @@
 
 all: dev
 
-dev: server-install-dev.dd.bz2
+dev: server-install-dev.dd
 
 prod: server-install-prod.dd.bz2
 

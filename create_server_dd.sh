@@ -7,7 +7,6 @@ if [ $(id -u) -ne 0 ]; then
     exec sudo -E "$0" "$@"
 fi
 
-eval "$(docker run waltplatform/dev-master env)"
 THIS_DIR=$(cd $(dirname $0); pwd)
 CONTAINER_DIR=$(mktemp -d)
 

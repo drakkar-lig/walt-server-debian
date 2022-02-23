@@ -1,5 +1,4 @@
 #!/bin/bash
-eval "$(docker run waltplatform/dev-master env)"
 MODE=$1
 EXPECTED_WALT_VERSION=7
 THIS_DIR=$(cd $(dirname $0); pwd)
@@ -55,8 +54,8 @@ else
 fi
 
 cat > Dockerfile << EOF
-FROM debian:buster
-MAINTAINER $DOCKER_IMAGE_MAINTAINER
+FROM debian:bullseye
+LABEL author="etienne.duble@imag.fr"
 
 # get docker GPG key and apt conf
 # not enabled yet because extension is not ".list".
@@ -68,11 +67,8 @@ RUN sed -i -e 's/main/main contrib non-free/g' /etc/apt/sources.list && \
     apt-get update && \
 	$APT_GET_INSTALL $MANY_PACKAGES && \
     cat /etc/apt/sources.list.d/docker.gpg | apt-key add - >/dev/null 2>&1 && \
-    cat /etc/apt/sources.list.d/libcontainers.gpg | apt-key add - >/dev/null 2>&1 && \
     mv /etc/apt/sources.list.d/docker.apt /etc/apt/sources.list.d/docker.list && \
-    mv /etc/apt/sources.list.d/libcontainers.apt /etc/apt/sources.list.d/libcontainers.list && \
     apt-get update && \
-    $APT_GET_INSTALL -t buster-backports libseccomp2 && \
     $APT_GET_INSTALL $CONTAINER_PACKAGES && \
 	apt-get clean && rm -f /etc/apt/sources.list.d/*.gpg
 
@@ -84,7 +80,7 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.p
 ADD files /
 
 # install services
-RUN walt-server-setup && walt-virtual-setup --type SERVER --init-system SYSTEMD
+RUN walt-server-setup
 
 # generate and select an UTF-8 locale
 RUN sed -i -e 's/# \\(en_US.UTF-8\\)/\\1/' /etc/locale.gen && \
