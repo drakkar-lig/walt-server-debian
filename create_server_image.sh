@@ -7,23 +7,15 @@ TMP_DIR=$(mktemp -d)
 
 cd $TMP_DIR
 
-cp -ar $THIS_DIR/conf_files files
-cp -ar $THIS_DIR/repo_files repo_files
+cp -ar $THIS_DIR/conf_files conf_files
 
 DEBOOTSTICK_PACKAGES="gdisk lvm2 linux-image-amd64 init grub-pc"
-OTHER_OS_PACKAGES=$(echo apt-transport-https ca-certificates gnupg2 \
-        curl gnupg-agent software-properties-common isc-dhcp-client \
-        vim net-tools keyboard-configuration console-setup \
-        iputils-arping locales dialog "*microcode*")
-WALT_DEPENDENCIES_PACKAGES=$(echo binfmt-support qemu-user-static \
-        lldpd snmp snmpd openssh-server snmp-mibs-downloader iputils-ping \
-        libsmi2-dev isc-dhcp-server nfs-kernel-server uuid-runtime postgresql \
-        ntpdate ntp lockfile-progs ptpd tftpd-hpa ebtables qemu-kvm bridge-utils \
-        screen ifupdown)
-PIP_DEPENDENCIES_PACKAGES="gcc python3-dev"
+OTHER_OS_PACKAGES=$(echo python3 isc-dhcp-client vim \
+        net-tools keyboard-configuration console-setup iputils-arping \
+        locales dialog curl "*microcode*")
+PIP_DEPENDENCIES_PACKAGES="gcc python3-dev libsmi2-dev"
+WALT_DEPENDENCIES_PACKAGES="python3-apt gpg"
 WALT_DEV_PACKAGES="git make sudo expect netcat"
-CONTAINER_PACKAGES="docker-ce docker-ce-cli containerd.io podman buildah skopeo \
-        containernetworking-plugins"
 
 GET_FIRMWARE_PACKAGES="""\
 apt-cache search --names-only 'firmware-.*' | awk '{print \$1}' | \
@@ -49,7 +41,7 @@ then
                             walt-client==$EXPECTED_WALT_VERSION"
 else
     WALT_INSTALL="cd /root && git clone https://github.com/drakkar-lig/walt-python-packages && \
-                  cd walt-python-packages && git checkout -b dev origin/dev && make install"
+                  cd walt-python-packages && git checkout  -b etienne-dev origin/etienne-dev && make install"
     MANY_PACKAGES="$MANY_PACKAGES $WALT_DEV_PACKAGES"
 fi
 
@@ -57,30 +49,21 @@ cat > Dockerfile << EOF
 FROM debian:bullseye
 LABEL author="etienne.duble@imag.fr"
 
-# get docker GPG key and apt conf
-# not enabled yet because extension is not ".list".
-# we need to have apt-transport-https installed first.
-ADD repo_files /etc/apt/sources.list.d/
-
 # install packages
 RUN sed -i -e 's/main/main contrib non-free/g' /etc/apt/sources.list && \
     apt-get update && \
 	$APT_GET_INSTALL $MANY_PACKAGES && \
-    cat /etc/apt/sources.list.d/docker.gpg | apt-key add - >/dev/null 2>&1 && \
-    mv /etc/apt/sources.list.d/docker.apt /etc/apt/sources.list.d/docker.list && \
-    apt-get update && \
-    $APT_GET_INSTALL $CONTAINER_PACKAGES && \
-	apt-get clean && rm -f /etc/apt/sources.list.d/*.gpg
+	apt-get clean
 
 # install python packages
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && \
     $WALT_INSTALL
 
-# copy static files 
-ADD files /
+# copy static conf files 
+ADD conf_files /
 
-# install services
-RUN walt-server-setup
+# setup walt software
+RUN walt-server-setup --mode image-install
 
 # generate and select an UTF-8 locale
 RUN sed -i -e 's/# \\(en_US.UTF-8\\)/\\1/' /etc/locale.gen && \

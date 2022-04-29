@@ -10,7 +10,7 @@ prodtest: server-install-prodtest.dd
 %.bz2: %
 	bzip2 $<
 
-.date_files/%.img: create_server_image.sh $(shell find repo_files -type f) $(shell find conf_files -type f)
+.date_files/%.img: create_server_image.sh $(shell find conf_files -type f)
 	./create_server_image.sh $* && touch $@
 
 server-install-%.dd: .date_files/%.img create_server_dd.sh
